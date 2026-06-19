@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../widgets/challenge_card.dart';
 
 class HomeScreen extends StatelessWidget {
   const HomeScreen({super.key});
@@ -198,6 +199,35 @@ class HomeScreen extends StatelessWidget {
               ),
 
               const SizedBox(height: 20),
+              const Text(
+  "Active Challenges",
+  style: TextStyle(
+    fontSize: 22,
+    fontWeight: FontWeight.bold,
+  ),
+),
+
+const SizedBox(height: 12),
+
+const ChallengeCard(
+  title: "Cycle to Campus",
+  xp: 100,
+  progress: "Completed 2/5 Days",
+),
+
+const ChallengeCard(
+  title: "Plant a Tree",
+  xp: 200,
+  progress: "Completed 1/1 Day",
+),
+
+const ChallengeCard(
+  title: "Use Public Transport",
+  xp: 150,
+  progress: "Completed 3/7 Days",
+),
+
+const SizedBox(height: 20),
 
               // Today's Impact
               const Text(
@@ -315,6 +345,7 @@ class HomeScreen extends StatelessWidget {
             ),
           ),
         ],
+        
       ),
     );
   }
