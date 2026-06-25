@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'register_screen.dart';
 import 'main_navigation.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -11,9 +12,42 @@ class LoginScreen extends StatefulWidget {
 
 class _LoginScreenState extends State<LoginScreen> {
   bool obscurePassword = true;
+  
 
-  final emailController = TextEditingController();
-  final passwordController = TextEditingController();
+  final TextEditingController emailController = TextEditingController();
+  final TextEditingController passwordController = TextEditingController();
+  bool isLoading = false;
+Future<void> signIn() async {
+  try {
+    setState(() {
+      isLoading = true;
+    });
+
+    await FirebaseAuth.instance.signInWithEmailAndPassword(
+      email: emailController.text.trim(),
+      password: passwordController.text.trim(),
+    );
+
+  } on FirebaseAuthException catch (e) {
+
+    String message = "Login failed";
+
+    if (e.code == 'user-not-found') {
+      message = "No user found";
+    } else if (e.code == 'wrong-password') {
+      message = "Incorrect password";
+    }
+
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text(message)),
+    );
+
+  } finally {
+    setState(() {
+      isLoading = false;
+    });
+  }
+}
 
   @override
   Widget build(BuildContext context) {
@@ -114,47 +148,42 @@ class _LoginScreenState extends State<LoginScreen> {
                   ),
                 ),
               ),
-//login button and function
-              const SizedBox(height: 30),
+          //login button and function
+const SizedBox(height: 30),
 
-              SizedBox(
-                width: double.infinity,
-                height: 55,
-                child: ElevatedButton(
-                  onPressed: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => const MainNavigationScreen(),
-                      ),
-                    );
-                  },
-                  child: const Text("Login"),
-                ),
-              ),
+SizedBox(
+  width: double.infinity,
+  height: 55,
+  child: ElevatedButton(
+    onPressed: isLoading ? null : signIn,
+    child: isLoading
+        ? const CircularProgressIndicator()
+        : const Text("Login"),
+  ),
+),
 
-              const SizedBox(height: 15),
+const SizedBox(height: 15),
 
-              SizedBox(
-                width: double.infinity,
-                height: 55,
-                child: OutlinedButton(
-                  onPressed: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => const RegisterScreen(),
-                      ),
-                    );
-                  },
-                  child: const Text("Create Account"),
-                ),
-              ),
-            ],
-          ),
+SizedBox(
+  width: double.infinity,
+  height: 55,
+  child: OutlinedButton(
+    onPressed: () {
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (context) => const RegisterScreen(),
+        ),
+      );
+    },
+    child: const Text("Create Account"),
+  ),
+),
+                     ],
         ),
       ),
     ),
-    );
+  ),
+);
   }
 }
